@@ -16,34 +16,32 @@ if (typeof firebase === "undefined") {
 function initFirebase() {
     // Firebase 設定
     const firebaseConfig = {
-  apiKey: "AIzaSyCjruHCFsMJ2bkQmzcLAeeDMmcjTSzc9kA",
-  authDomain: "sikobutton.firebaseapp.com",
-  projectId: "sikobutton",
-  storageBucket: "sikobutton.firebasestorage.app",
-  messagingSenderId: "1014167519503",
-  appId: "1:1014167519503:web:11dae1bf0cbf729706fe7a",
-  measurementId: "G-JZ8EEDMS0J"
+        apiKey: "あなたのAPIキー",
+        authDomain: "あなたのAuthドメイン",
+        projectId: "あなたのプロジェクトID",
+        storageBucket: "あなたのストレージバケット",
+        messagingSenderId: "あなたのメッセージングID",
+        appId: "あなたのアプリID"
     };
 
     // Firebase 初期化
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ボタンを探して処理を設定
+    // **記事ごとの一意なIDを生成**
+    function generateArticleId() {
+        let url = window.location.pathname; // 記事ページのURLを取得
+        return url.replace(/[^a-zA-Z0-9]/g, ""); // 記号を削除してID化
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
+        const articleId = generateArticleId();
+        console.log(`生成された記事ID: ${articleId}`);
+
         document.querySelectorAll(".sikotta-button").forEach(button => {
-            const articleId = button.getAttribute("data-article-id");
-            if (!articleId) {
-                console.error("記事IDが取得できませんでした");
-                return;
-            }
+            button.setAttribute("data-article-id", articleId); // ボタンにIDを設定
+            loadSikottaCounts(articleId); // Firestoreからカウントを取得
 
-            console.log(`記事ごとのID: ${articleId}`);
-
-            // Firestoreのカウントを読み込む
-            loadSikottaCounts(articleId);
-
-            // クリックイベント設定
             button.addEventListener("click", async function () {
                 console.log(`ボタンがクリックされました！ 記事ID: ${articleId}`);
                 await updateSikottaCount(articleId);
@@ -71,11 +69,11 @@ function initFirebase() {
 
         if (docSnap.exists) {
             const countValue = docSnap.data().count;
-            document.querySelectorAll(`.sikotta-button[data-article-id="${articleId}"] .sikotta-count`).forEach(el => {
+            document.querySelectorAll(".sikotta-count").forEach(el => {
                 el.innerText = countValue;
             });
         } else {
-            document.querySelectorAll(`.sikotta-button[data-article-id="${articleId}"] .sikotta-count`).forEach(el => {
+            document.querySelectorAll(".sikotta-count").forEach(el => {
                 el.innerText = "0";
             });
         }
