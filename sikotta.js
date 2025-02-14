@@ -22,6 +22,7 @@ function initFirebase() {
   storageBucket: "sikobutton.firebasestorage.app",
   messagingSenderId: "1014167519503",
   appId: "1:1014167519503:web:11dae1bf0cbf729706fe7a",
+  measurementId: "G-JZ8EEDMS0J"
     };
 
     // Firebase 初期化
@@ -69,11 +70,12 @@ function initFirebase() {
         const docSnap = await docRef.get();
 
         if (docSnap.exists) {
-            document.querySelectorAll(`[data-article-id="${articleId}"] .sikotta-count`).forEach(el => {
-                el.innerText = docSnap.data().count;
+            const countValue = docSnap.data().count;
+            document.querySelectorAll(`.sikotta-button[data-article-id="${articleId}"] .sikotta-count`).forEach(el => {
+                el.innerText = countValue;
             });
         } else {
-            document.querySelectorAll(`[data-article-id="${articleId}"] .sikotta-count`).forEach(el => {
+            document.querySelectorAll(`.sikotta-button[data-article-id="${articleId}"] .sikotta-count`).forEach(el => {
                 el.innerText = "0";
             });
         }
