@@ -16,12 +16,13 @@ if (typeof firebase === "undefined") {
 function initFirebase() {
     // Firebase 設定
     const firebaseConfig = {
-        apiKey: "あなたのAPIキー",
-        authDomain: "あなたのAuthドメイン",
-        projectId: "あなたのプロジェクトID",
-        storageBucket: "あなたのストレージバケット",
-        messagingSenderId: "あなたのメッセージングID",
-        appId: "あなたのアプリID"
+  apiKey: "AIzaSyCjruHCFsMJ2bkQmzcLAeeDMmcjTSzc9kA",
+  authDomain: "sikobutton.firebaseapp.com",
+  projectId: "sikobutton",
+  storageBucket: "sikobutton.firebasestorage.app",
+  messagingSenderId: "1014167519503",
+  appId: "1:1014167519503:web:11dae1bf0cbf729706fe7a",
+  measurementId: "G-JZ8EEDMS0J"
     };
 
     // Firebase 初期化
@@ -31,7 +32,7 @@ function initFirebase() {
     // **記事ごとの一意なIDを生成**
     function generateArticleId() {
         let url = window.location.pathname; // 記事ページのURLを取得
-        return url.replace(/[^a-zA-Z0-9]/g, ""); // 記号を削除してID化
+        return url.replace(/[^a-zA-Z0-9]/g, ""); // 記号を削除してFirestoreのドキュメントIDに使える形にする
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -50,19 +51,21 @@ function initFirebase() {
         });
     });
 
-    // Firestoreにカウントを保存
+    // **Firestoreにカウントを保存**
     async function updateSikottaCount(articleId) {
         const docRef = db.collection("sikottaCounts").doc(articleId);
         const docSnap = await docRef.get();
 
         if (docSnap.exists) {
+            // 既存のカウントを増加
             await docRef.update({ count: firebase.firestore.FieldValue.increment(1) });
         } else {
+            // 新規ドキュメント作成
             await docRef.set({ count: 1 });
         }
     }
 
-    // Firestoreからカウントを取得
+    // **Firestoreからカウントを取得**
     async function loadSikottaCounts(articleId) {
         const docRef = db.collection("sikottaCounts").doc(articleId);
         const docSnap = await docRef.get();
