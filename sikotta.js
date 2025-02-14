@@ -1,8 +1,7 @@
-<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-// Firebaseの設定
+// Firebase 設定
 const firebaseConfig = {
   apiKey: "AIzaSyCjruHCFsMJ2bkQmzcLAeeDMmcjTSzc9kA",
   authDomain: "sikobutton.firebaseapp.com",
@@ -13,11 +12,11 @@ const firebaseConfig = {
   measurementId: "G-JZ8EEDMS0J"
 };
 
-// Firebaseを初期化
+// Firebase 初期化
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Firestoreにカウントを保存する関数
+// カウントを増やす処理
 async function updateSikottaCount(articleId) {
   const docRef = doc(db, "sikottaCounts", articleId);
   const docSnap = await getDoc(docRef);
@@ -28,12 +27,12 @@ async function updateSikottaCount(articleId) {
     await setDoc(docRef, { count: 1 });
   }
 
-  // 最新のカウントを取得して表示更新
+  // Firestoreのデータ取得し、ボタンの数字を更新
   const updatedDoc = await getDoc(docRef);
   document.getElementById(`sikotta-count-${articleId}`).innerText = updatedDoc.data().count;
 }
 
-// Firestoreからカウントを取得して表示
+// ページ読み込み時にカウントを表示
 async function loadSikottaCounts(articleId) {
   const docRef = doc(db, "sikottaCounts", articleId);
   const docSnap = await getDoc(docRef);
@@ -45,15 +44,14 @@ async function loadSikottaCounts(articleId) {
   }
 }
 
-// ボタンが押されたらカウントを増やす
+// 全てのボタンにクリックイベントを設定
 document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll(".sikotta-button").forEach(button => {
+  document.querySelectorAll(".sikotta-button").forEach((button) => {
     const articleId = button.dataset.articleId;
-    loadSikottaCounts(articleId); // ページ読み込み時にカウントを取得
+    loadSikottaCounts(articleId);
 
     button.addEventListener("click", function () {
       updateSikottaCount(articleId);
     });
   });
 });
-</script>
